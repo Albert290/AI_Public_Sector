@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String
+  password  String
+  roleId    String
+  role      Role       @relation(fields: [roleId], references: [id])
+  progress  Progress[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([email])
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String
+  isActive    Boolean  @default(false)
+  icon        String?
+  lessons     Lesson[]
+  users       User[]
+  createdAt   DateTime @default(now())
+}
+
+model Lesson {
+  id          String     @id @default(cuid())
+  title       String
+  description String
+  content     String     @db.Text
+  order       Int
+  duration    Int?
+  roleId      String
+  role        Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  progress    Progress[]
+  createdAt   DateTime   @default(now())
+
+  @@unique([roleId, order], name: "roleId_order")
+  @@index([roleId, order])
+}
+
+model Progress {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId    String
+  lesson      Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+}

@@ -146,8 +146,8 @@ model Progress {
 
 ### Prerequisites
 - Node.js 18+ 
-- PostgreSQL database
-- pnpm (recommended) or npm
+- PostgreSQL database (local) or Neon account
+- npm
 
 ### Installation
 
@@ -157,24 +157,42 @@ git clone <repository-url>
 cd AI_Public_Sector
 
 # Install dependencies
-pnpm install
+npm install
 
 # Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your credentials
+cp .env.example .env
+# Edit .env with your credentials
 
 # Set up database
-pnpm prisma generate
-pnpm prisma migrate dev
+npm run prisma generate
+npm run prisma migrate dev
 
 # Seed initial data
-pnpm prisma db seed
+npm run prisma db seed
 
 # Run development server
-pnpm dev
+npm run dev
 ```
 
 Visit `http://localhost:3000` to see the application.
+
+### Using Neon Database (Recommended for Production)
+
+If you want to use Neon's serverless PostgreSQL:
+
+```bash
+# Run the automated setup script
+./scripts/neon-setup.sh
+
+# Or manually:
+# 1. Create Neon project at https://neon.tech
+# 2. Get your connection strings
+# 3. Update .env file
+# 4. Run migrations: npx prisma migrate deploy
+# 5. Seed database: npx tsx prisma/seed.ts
+```
+
+See [NEON_MIGRATION.md](./NEON_MIGRATION.md) for detailed instructions.
 
 ## 🎓 User Journey
 
@@ -284,18 +302,38 @@ NEXTAUTH_SECRET="your-secret-key-here"
 # Optional: Analytics, etc.
 ```
 
-## 🚢 Deployment on Vercel
+## 🚢 Deployment
 
-1. Push code to GitHub repository
-2. Connect repository to Vercel
-3. Configure environment variables in Vercel dashboard
-4. Deploy!
+For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
 
-For Neon database:
-1. Create project on Neon.tech
-2. Copy connection string
-3. Update `DATABASE_URL` in Vercel environment variables
-4. Redeploy
+### Quick Deploy to Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+
+1. **Push to GitHub**
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git push -u origin main
+   ```
+
+2. **Deploy**
+   - Connect your GitHub repo to Vercel
+   - Set environment variables (DATABASE_URL, NEXTAUTH_URL, NEXTAUTH_SECRET)
+   - Vercel will auto-deploy
+
+3. **Set up Database**
+   - Use Vercel Postgres, Supabase, or Neon
+   - Run migrations: `npx prisma migrate deploy`
+   - Seed database: `npx tsx prisma/seed.ts`
+
+### Prerequisites for Deployment
+- PostgreSQL database (Vercel Postgres, Supabase, Neon recommended)
+- Environment variables configured
+- Build succeeds locally (`npm run build`)
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for Railway, Netlify, and troubleshooting guides.
 
 ## 🤝 Contributing
 
