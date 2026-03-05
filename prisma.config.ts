@@ -11,7 +11,5 @@ export default defineConfig({
   },
   datasource: {
     url: process.env["DATABASE_URL"],
-    // For Neon: Use direct connection for migrations
-    directUrl: process.env["DIRECT_DATABASE_URL"],
   },
 });
